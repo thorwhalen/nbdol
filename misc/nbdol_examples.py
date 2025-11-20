@@ -347,7 +347,7 @@ def example_batch_update():
 
 
 # ============================================================================
-# EXAMPLE 10: Export to Dict (for backwards compatibility)
+# EXAMPLE 10: Export to Dict
 # ============================================================================
 
 
@@ -357,7 +357,7 @@ def example_export_to_dict():
     nb.append_markdown("# Test")
     nb.append_code("x = 1")
 
-    # Get as dict (compatible with old notebook_gen.py format)
+    # Export notebook as a plain dict for JSON workflows
     nb_dict = nb.to_dict()
 
     print(f"Notebook format: {nb_dict['nbformat']}")

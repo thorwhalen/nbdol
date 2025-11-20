@@ -157,6 +157,7 @@ pytest nbdol/tests/
 ## Migration from notebook_gen.py
 
 The old `notebook_gen.py` used direct dict manipulation. Key changes:
+- Metadata defaults now live in `_metadata_with_defaults`, so callers pass plain mappings.
 
 **Old approach:**
 ```python
@@ -167,9 +168,9 @@ def create_notebook(params: NotebookParams) -> dict:
 
 **New approach:**
 ```python
-def create_notebook(params: NotebookParams) -> Notebook:
-    metadata = dataclass_to_dict(params)
-    return populate_notebook(metadata, n_viz_cells=5)
+def create_notebook(metadata: Mapping[str, Any]) -> Notebook:
+    prepared = _metadata_with_defaults(metadata)
+    return populate_notebook(prepared, n_viz_cells=5)
 ```
 
 Benefits:
@@ -179,7 +180,7 @@ Benefits:
 - Type-safe operations
 - Extensible template registry
 
-See `migration_example.py` for complete refactoring guide.
+See `nbdol_migration.py` for complete refactoring guide.
 
 ## Future Enhancements
 

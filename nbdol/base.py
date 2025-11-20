@@ -122,9 +122,32 @@ class Notebook(MutableSequence):
         Examples:
             >>> nb = Notebook.from_file('analysis.ipynb')  # doctest: +SKIP
         """
+        from nbformat.reader import NotJSONError
+        import os
+
         path = Path(path)
-        with open(path, 'r', encoding='utf-8') as f:
-            nb_node = nbformat.read(f, as_version=4)
+
+        # Check if file exists
+        if not path.exists():
+            raise FileNotFoundError(f"Notebook file not found: {path}")
+
+        # Check if file is empty
+        file_size = os.path.getsize(path)
+        if file_size == 0:
+            raise ValueError(
+                f"Notebook file is empty (0 bytes): {path}\n"
+                "Please ensure the file contains valid notebook JSON."
+            )
+
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                nb_node = nbformat.read(f, as_version=4)
+        except NotJSONError as e:
+            raise ValueError(
+                f"File does not contain valid notebook JSON: {path}\n"
+                f"File size: {file_size} bytes\n"
+                f"Original error: {e}"
+            ) from e
 
         instance = cls.__new__(cls)
         instance._nb = nb_node

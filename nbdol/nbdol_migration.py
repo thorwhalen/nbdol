@@ -4,89 +4,90 @@ This shows how to refactor the original NotebookParams-based approach
 to use the new nbdol module with built-in protocols.
 """
 
-from dataclasses import dataclass, field
-from typing import Optional
+from typing import Any, Mapping, Optional
+
 from nbdol.base import Notebook, NotebookStore, populate_notebook
 
+_DEFAULT_METADATA_VALUES: dict[str, Any] = {
+    'ext': None,
+    'install': "cosmograph tabled cosmodata",
+    'installs_not_to_import': ["cosmograph"],
+    'imports': """from functools import partial 
+from cosmograph import cosmo""",
+    'viz_columns_info': None,
+    'related_code': None,
+    'peep_mode': 'short',
+    'peep_exclude_cols': [],
+}
 
-# Keep the same NotebookParams for backwards compatibility
-@dataclass
-class NotebookParams:
-    """Parameters for generating a Jupyter notebook.
-
-    Examples:
-        >>> params = NotebookParams(
-        ...     src='https://example.com/data.csv',
-        ...     target_filename='data.csv',
-        ...     dataset_name='Test Dataset',
-        ...     dataset_description='A test dataset'
-        ... )
-    """
-
-    src: str
-    target_filename: str
-    dataset_name: str
-    dataset_description: str
-    ext: Optional[str] = None
-    install: str = "cosmograph tabled cosmodata"
-    installs_not_to_import: list[str] = field(default_factory=lambda: ["cosmograph"])
-    imports: str = field(
-        default_factory=lambda: """from functools import partial 
-from cosmograph import cosmo"""
-    )
-    viz_columns_info: Optional[str] = None
-    related_code: Optional[str] = None
-    peep_mode: str = "short"
-    peep_exclude_cols: list[str] = field(default_factory=list)
+_REQUIRED_BASE_FIELDS = ('src', 'target_filename')
+_REQUIRED_TEXT_FIELDS = ('title', 'description')
 
 
-# NEW APPROACH: Simple wrapper that converts params to dict
+def _metadata_with_defaults(metadata: Mapping[str, Any]) -> dict[str, Any]:
+    """Merge metadata with defaults and support legacy field names."""
+    merged: dict[str, Any] = {**_DEFAULT_METADATA_VALUES, **dict(metadata)}
+
+    if 'title' not in merged and 'dataset_name' in merged:
+        merged['title'] = merged['dataset_name']
+    if 'description' not in merged and 'dataset_description' in merged:
+        merged['description'] = merged['dataset_description']
+
+    missing_base = [field for field in _REQUIRED_BASE_FIELDS if field not in merged]
+    if missing_base:
+        raise ValueError(
+            f"Metadata must include {', '.join(_REQUIRED_BASE_FIELDS)}; "
+            f"missing: {', '.join(missing_base)}"
+        )
+
+    missing_text = [field for field in _REQUIRED_TEXT_FIELDS if field not in merged]
+    if missing_text:
+        raise ValueError(
+            "Metadata must include 'title' and 'description' (or the legacy "
+            "'dataset_name'/'dataset_description' aliases)."
+        )
+
+    if isinstance(merged.get('installs_not_to_import'), list):
+        merged['installs_not_to_import'] = list(merged['installs_not_to_import'])
+    if isinstance(merged.get('peep_exclude_cols'), list):
+        merged['peep_exclude_cols'] = list(merged['peep_exclude_cols'])
+
+    return merged
+
+
 def create_notebook(
-    params: NotebookParams, *, output_path: Optional[str] = None, n_viz_cells: int = 5
+    metadata: Mapping[str, Any],
+    *,
+    output_path: Optional[str] = None,
+    n_viz_cells: int = 5,
 ) -> Notebook:
-    """Generate a Jupyter notebook from parameters using nbdol.
-
-    This is a drop-in replacement for the old create_notebook function,
-    but returns a Notebook object instead of a dict.
+    """Generate a Jupyter notebook from metadata using nbdol.
 
     Args:
-        params: NotebookParams instance with all configuration
-        output_path: Optional path to save the notebook
-        n_viz_cells: Number of empty visualization cells to create
+        metadata: Mapping describing the notebook. Provide at least 'src',
+            'target_filename', and either 'title'/'description' or their legacy
+            aliases 'dataset_name'/'dataset_description'.
+        output_path: Optional path to save the notebook.
+        n_viz_cells: Number of empty visualization cells to create.
 
     Returns:
         Notebook instance (can be further modified)
 
     Examples:
-        >>> params = NotebookParams(
-        ...     src='https://example.com/data.csv',
-        ...     target_filename='data.csv',
-        ...     dataset_name='Test',
-        ...     dataset_description='Test data'
-        ... )
-        >>> nb = create_notebook(params)
-        >>> nb.append_markdown("## Custom Section")
-        >>> nb.save('output.ipynb')
+        >>> metadata = {
+        ...     'title': 'Test Dataset',
+        ...     'description': 'A test dataset',
+        ...     'src': 'https://example.com/data.csv',
+        ...     'target_filename': 'data.csv',
+        ... }
+        >>> nb = create_notebook(metadata)
+        >>> isinstance(nb, Notebook)
+        True
     """
-    # Convert dataclass to dict for metadata
-    metadata = {
-        'title': params.dataset_name,
-        'description': params.dataset_description,
-        'src': params.src,
-        'target_filename': params.target_filename,
-        'ext': params.ext,
-        'install': params.install,
-        'installs_not_to_import': params.installs_not_to_import,
-        'imports': params.imports,
-        'viz_columns_info': params.viz_columns_info,
-        'related_code': params.related_code,
-        'peep_mode': params.peep_mode,
-        'peep_exclude_cols': params.peep_exclude_cols,
-    }
+    metadata_with_defaults = _metadata_with_defaults(metadata)
 
-    # Use nbdol to create the notebook
     nb = populate_notebook(
-        metadata,
+        metadata_with_defaults,
         template_sequence=('intro', 'setup', 'load', 'explore'),
         n_viz_cells=n_viz_cells,
         output_path=output_path,
@@ -95,28 +96,6 @@ def create_notebook(
     return nb
 
 
-# For backwards compatibility: return dict
-def create_notebook_dict(
-    params: NotebookParams, *, output_path: Optional[str] = None, n_viz_cells: int = 5
-) -> dict:
-    """Generate notebook and return as dict (old API).
-
-    Examples:
-        >>> params = NotebookParams(  # doctest: +SKIP
-        ...     src='https://example.com/data.csv',
-        ...     target_filename='data.csv',
-        ...     dataset_name='Test Dataset',
-        ...     dataset_description='A test dataset'
-        ... )
-        >>> nb_dict = create_notebook_dict(params)  # doctest: +SKIP
-        >>> nb_dict['nbformat']  # doctest: +SKIP
-        4
-    """
-    nb = create_notebook(params, output_path=output_path, n_viz_cells=n_viz_cells)
-    return nb.to_dict()
-
-
-# EXAMPLE: Working with cosmodata directly
 def generate_notebooks_from_cosmodata(
     metas, *, output_dir: str = 'notebooks/', dataset_keys: Optional[list[str]] = None
 ) -> NotebookStore:
@@ -158,7 +137,6 @@ def generate_notebooks_from_cosmodata(
     return store
 
 
-# EXAMPLE: Custom template for specific use case
 def create_custom_analysis_notebook(
     dataset_key: str,
     metas,
@@ -197,7 +175,6 @@ def create_custom_analysis_notebook(
     return nb
 
 
-# EXAMPLE: Modifying existing notebooks
 def add_section_to_existing_notebooks(
     store: NotebookStore,
     section_title: str,
@@ -236,16 +213,15 @@ def add_section_to_existing_notebooks(
 
 
 if __name__ == '__main__':
-    # Example usage
-    params = NotebookParams(
-        src='https://example.com/bitcoin.parquet',
-        target_filename='bitcoin.parquet',
-        dataset_name='Bitcoin Price Data',
-        dataset_description='Historical Bitcoin prices and trading volume',
-    )
+    metadata = {
+        'title': 'Bitcoin Price Data',
+        'description': 'Historical Bitcoin prices and trading volume',
+        'src': 'https://example.com/bitcoin.parquet',
+        'target_filename': 'bitcoin.parquet',
+    }
 
     # Create notebook
-    nb = create_notebook(params, output_path='bitcoin_analysis.ipynb')
+    nb = create_notebook(metadata, output_path='bitcoin_analysis.ipynb')
 
     # Can still modify after creation
     nb.append_markdown("## Additional Analysis")
