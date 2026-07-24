@@ -69,18 +69,18 @@ def process_notebook(
 
 
 def _has_error_output(cell: Cell, _: int) -> bool:
-    outputs = cell.get('outputs', [])
-    return any(output.get('output_type') == 'error' for output in outputs)
+    outputs = cell.get("outputs", [])
+    return any(output.get("output_type") == "error" for output in outputs)
 
 
 def _clear_error_outputs(cell: Cell, _: int) -> Cell:
-    outputs = cell.get('outputs', [])
+    outputs = cell.get("outputs", [])
     cleaned_outputs = [
-        output for output in outputs if output.get('output_type') != 'error'
+        output for output in outputs if output.get("output_type") != "error"
     ]
 
     if cleaned_outputs != outputs:
-        cell['outputs'] = cleaned_outputs
+        cell["outputs"] = cleaned_outputs
 
     return None
 

@@ -61,7 +61,7 @@ from nbdol import Notebook
 nb = Notebook()
 nb.append_markdown("# Title")
 nb.append_code("import pandas as pd")
-nb.save('output.ipynb')
+nb.save("output.ipynb")
 ```
 
 ### Using NotebookStore
@@ -69,11 +69,11 @@ nb.save('output.ipynb')
 ```python
 from nbdol import NotebookStore
 
-store = NotebookStore('notebooks/')
-store['analysis'] = Notebook()  # Save
-nb = store['analysis']          # Load
-del store['old']                # Delete
-list(store)                     # List all
+store = NotebookStore("notebooks/")
+store["analysis"] = Notebook()  # Save
+nb = store["analysis"]  # Load
+del store["old"]  # Delete
+list(store)  # List all
 ```
 
 ### Template-Based Generation
@@ -82,16 +82,16 @@ list(store)                     # List all
 from nbdol import populate_notebook
 
 metadata = {
-    'title': 'Bitcoin Analysis',
-    'src': 'https://example.com/bitcoin.parquet',
-    'target_filename': 'bitcoin.parquet'
+    "title": "Bitcoin Analysis",
+    "src": "https://example.com/bitcoin.parquet",
+    "target_filename": "bitcoin.parquet",
 }
 
 nb = populate_notebook(
     metadata,
-    template_sequence=['intro', 'setup', 'load', 'explore'],
+    template_sequence=["intro", "setup", "load", "explore"],
     n_viz_cells=5,
-    output_path='bitcoin.ipynb'
+    output_path="bitcoin.ipynb",
 )
 ```
 
@@ -103,14 +103,16 @@ import nbformat
 
 templates = CellTemplates()
 
+
 def my_template(meta):
     yield nbformat.v4.new_markdown_cell(f"# {meta['title']}")
     yield nbformat.v4.new_code_cell("import pandas as pd")
 
-templates.register('custom', my_template)
+
+templates.register("custom", my_template)
 
 nb = Notebook()
-nb.extend_from_template(templates['custom'], {'title': 'Test'})
+nb.extend_from_template(templates["custom"], {"title": "Test"})
 ```
 
 ## Integration with cosmodata
@@ -119,9 +121,9 @@ nb.extend_from_template(templates['custom'], {'title': 'Test'})
 from cosmodata import metas
 from nbdol import NotebookStore, populate_notebook
 
-store = NotebookStore('cosmo_notebooks/notebooks/')
+store = NotebookStore("cosmo_notebooks/notebooks/")
 
-for key in ['bitcoin', 'weather']:
+for key in ["bitcoin", "weather"]:
     nb = populate_notebook(metas[key], n_viz_cells=5)
     store[key] = nb
 ```

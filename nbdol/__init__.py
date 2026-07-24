@@ -23,11 +23,11 @@ from nbdol.base import (
 )
 
 __all__ = [
-    'Notebook',
-    'NotebookStore',
-    'CellTemplates',
-    'notebook_from_metadata',
-    'populate_notebook',
-    'markdown_cell',
-    'code_cell',
+    "Notebook",
+    "NotebookStore",
+    "CellTemplates",
+    "notebook_from_metadata",
+    "populate_notebook",
+    "markdown_cell",
+    "code_cell",
 ]

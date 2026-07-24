@@ -9,29 +9,29 @@ from typing import Any, Mapping, Optional
 from nbdol.base import Notebook, NotebookStore, populate_notebook
 
 _DEFAULT_METADATA_VALUES: dict[str, Any] = {
-    'ext': None,
-    'install': "cosmograph tabled cosmodata",
-    'installs_not_to_import': ["cosmograph"],
-    'imports': """from functools import partial 
+    "ext": None,
+    "install": "cosmograph tabled cosmodata",
+    "installs_not_to_import": ["cosmograph"],
+    "imports": """from functools import partial 
 from cosmograph import cosmo""",
-    'viz_columns_info': None,
-    'related_code': None,
-    'peep_mode': 'short',
-    'peep_exclude_cols': [],
+    "viz_columns_info": None,
+    "related_code": None,
+    "peep_mode": "short",
+    "peep_exclude_cols": [],
 }
 
-_REQUIRED_BASE_FIELDS = ('src', 'target_filename')
-_REQUIRED_TEXT_FIELDS = ('title', 'description')
+_REQUIRED_BASE_FIELDS = ("src", "target_filename")
+_REQUIRED_TEXT_FIELDS = ("title", "description")
 
 
 def _metadata_with_defaults(metadata: Mapping[str, Any]) -> dict[str, Any]:
     """Merge metadata with defaults and support legacy field names."""
     merged: dict[str, Any] = {**_DEFAULT_METADATA_VALUES, **dict(metadata)}
 
-    if 'title' not in merged and 'dataset_name' in merged:
-        merged['title'] = merged['dataset_name']
-    if 'description' not in merged and 'dataset_description' in merged:
-        merged['description'] = merged['dataset_description']
+    if "title" not in merged and "dataset_name" in merged:
+        merged["title"] = merged["dataset_name"]
+    if "description" not in merged and "dataset_description" in merged:
+        merged["description"] = merged["dataset_description"]
 
     missing_base = [field for field in _REQUIRED_BASE_FIELDS if field not in merged]
     if missing_base:
@@ -47,10 +47,10 @@ def _metadata_with_defaults(metadata: Mapping[str, Any]) -> dict[str, Any]:
             "'dataset_name'/'dataset_description' aliases)."
         )
 
-    if isinstance(merged.get('installs_not_to_import'), list):
-        merged['installs_not_to_import'] = list(merged['installs_not_to_import'])
-    if isinstance(merged.get('peep_exclude_cols'), list):
-        merged['peep_exclude_cols'] = list(merged['peep_exclude_cols'])
+    if isinstance(merged.get("installs_not_to_import"), list):
+        merged["installs_not_to_import"] = list(merged["installs_not_to_import"])
+    if isinstance(merged.get("peep_exclude_cols"), list):
+        merged["peep_exclude_cols"] = list(merged["peep_exclude_cols"])
 
     return merged
 
@@ -88,7 +88,7 @@ def create_notebook(
 
     nb = populate_notebook(
         metadata_with_defaults,
-        template_sequence=('intro', 'setup', 'load', 'explore'),
+        template_sequence=("intro", "setup", "load", "explore"),
         n_viz_cells=n_viz_cells,
         output_path=output_path,
     )
@@ -97,7 +97,7 @@ def create_notebook(
 
 
 def generate_notebooks_from_cosmodata(
-    metas, *, output_dir: str = 'notebooks/', dataset_keys: Optional[list[str]] = None
+    metas, *, output_dir: str = "notebooks/", dataset_keys: Optional[list[str]] = None
 ) -> NotebookStore:
     """Generate notebooks for multiple datasets from cosmodata.
 
@@ -128,7 +128,7 @@ def generate_notebooks_from_cosmodata(
 
         # cosmodata meta dict can be used directly as metadata
         nb = populate_notebook(
-            meta, template_sequence=('intro', 'setup', 'load', 'explore'), n_viz_cells=5
+            meta, template_sequence=("intro", "setup", "load", "explore"), n_viz_cells=5
         )
 
         # Save using store (dict-like interface)
@@ -157,7 +157,7 @@ def create_custom_analysis_notebook(
 
     # Create base notebook
     nb = populate_notebook(
-        meta, template_sequence=('intro', 'setup', 'load', 'explore')
+        meta, template_sequence=("intro", "setup", "load", "explore")
     )
 
     # Add custom analysis section
@@ -212,16 +212,16 @@ def add_section_to_existing_notebooks(
         store[key] = nb
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     metadata = {
-        'title': 'Bitcoin Price Data',
-        'description': 'Historical Bitcoin prices and trading volume',
-        'src': 'https://example.com/bitcoin.parquet',
-        'target_filename': 'bitcoin.parquet',
+        "title": "Bitcoin Price Data",
+        "description": "Historical Bitcoin prices and trading volume",
+        "src": "https://example.com/bitcoin.parquet",
+        "target_filename": "bitcoin.parquet",
     }
 
     # Create notebook
-    nb = create_notebook(metadata, output_path='bitcoin_analysis.ipynb')
+    nb = create_notebook(metadata, output_path="bitcoin_analysis.ipynb")
 
     # Can still modify after creation
     nb.append_markdown("## Additional Analysis")

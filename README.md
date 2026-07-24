@@ -39,7 +39,7 @@ print(f"Number of cells: {len(nb)}")
 print(f"First cell: {nb[0]['source']}")
 
 # Save
-nb.save('analysis.ipynb')
+nb.save("analysis.ipynb")
 ```
 
 ### Manage Notebooks as Files
@@ -48,23 +48,23 @@ nb.save('analysis.ipynb')
 from nbdol import NotebookStore
 
 # Dict-like interface to notebook directory
-store = NotebookStore('notebooks/')
+store = NotebookStore("notebooks/")
 
 # Save notebooks
-store['analysis'] = nb  # Creates notebooks/analysis.ipynb
+store["analysis"] = nb  # Creates notebooks/analysis.ipynb
 
 # Load notebooks
-nb = store['analysis']
+nb = store["analysis"]
 
 # List notebooks
 print(list(store))  # ['analysis', 'exploration', ...]
 
 # Check existence
-if 'analysis' in store:
+if "analysis" in store:
     print("Found it!")
 
 # Delete
-del store['old_notebook']
+del store["old_notebook"]
 ```
 
 ### Generate from Metadata
@@ -74,18 +74,18 @@ from nbdol import populate_notebook
 
 # Metadata dict (e.g., from cosmodata)
 metadata = {
-    'title': 'Bitcoin Analysis',
-    'description': 'BTC price history',
-    'src': 'https://example.com/bitcoin.parquet',
-    'target_filename': 'bitcoin.parquet'
+    "title": "Bitcoin Analysis",
+    "description": "BTC price history",
+    "src": "https://example.com/bitcoin.parquet",
+    "target_filename": "bitcoin.parquet",
 }
 
 # Generate notebook with templates
 nb = populate_notebook(
     metadata,
-    template_sequence=['intro', 'setup', 'load', 'explore'],
+    template_sequence=["intro", "setup", "load", "explore"],
     n_viz_cells=5,
-    output_path='bitcoin.ipynb'
+    output_path="bitcoin.ipynb",
 )
 ```
 
@@ -110,7 +110,7 @@ nb[3] = new_cell
 
 # Iterate
 for cell in nb:
-    print(cell['cell_type'])
+    print(cell["cell_type"])
 
 # Slice
 first_five = nb[:5]
@@ -124,15 +124,15 @@ print(len(nb))
 Manage notebooks in a directory using dict syntax:
 
 ```python
-store = NotebookStore('notebooks/')
+store = NotebookStore("notebooks/")
 
 # Dict operations
-store['name'] = notebook  # Save
-nb = store['name']        # Load
-del store['name']         # Delete
-'name' in store           # Check existence
-list(store)               # List all keys
-len(store)                # Count notebooks
+store["name"] = notebook  # Save
+nb = store["name"]  # Load
+del store["name"]  # Delete
+"name" in store  # Check existence
+list(store)  # List all keys
+len(store)  # Count notebooks
 
 # Iteration
 for key in store:
@@ -150,16 +150,18 @@ import nbformat
 
 templates = CellTemplates()
 
+
 # Define template
 def my_template(meta):
     yield nbformat.v4.new_markdown_cell(f"# {meta['title']}")
     yield nbformat.v4.new_code_cell("import pandas as pd")
 
+
 # Register
-templates.register('intro', my_template)
+templates.register("intro", my_template)
 
 # Use in notebook
-nb.extend_from_template(templates['intro'], {'title': 'Test'})
+nb.extend_from_template(templates["intro"], {"title": "Test"})
 ```
 
 ## Integration with cosmodata
@@ -169,22 +171,20 @@ from cosmodata import metas
 from nbdol import NotebookStore, populate_notebook
 
 # Create store
-store = NotebookStore('cosmo_notebooks/notebooks/')
+store = NotebookStore("cosmo_notebooks/notebooks/")
 
 # Generate notebooks for datasets
-for dataset_key in ['bitcoin', 'weather', 'covid']:
+for dataset_key in ["bitcoin", "weather", "covid"]:
     meta = metas[dataset_key]
-    
+
     nb = populate_notebook(
-        meta,
-        template_sequence=['intro', 'setup', 'load', 'explore'],
-        n_viz_cells=5
+        meta, template_sequence=["intro", "setup", "load", "explore"], n_viz_cells=5
     )
-    
+
     # Add custom sections
     nb.append_markdown("## Custom Analysis")
     nb.append_code("# Your code here")
-    
+
     # Save
     store[dataset_key] = nb
 ```
@@ -199,21 +199,23 @@ import nbformat
 
 templates = CellTemplates()
 
-@templates.register('custom_intro')
+
+@templates.register("custom_intro")
 def custom_intro_template(meta):
     """Custom introduction with author info."""
     yield nbformat.v4.new_markdown_cell(f"# {meta['title']}")
     yield nbformat.v4.new_markdown_cell(f"*By {meta['author']}*")
     yield nbformat.v4.new_markdown_cell(f"**Date:** {meta['date']}")
-    
-    if 'description' in meta:
+
+    if "description" in meta:
         yield nbformat.v4.new_markdown_cell(f"## Overview\n\n{meta['description']}")
+
 
 # Use template
 nb = Notebook()
 nb.extend_from_template(
-    templates['custom_intro'],
-    {'title': 'Analysis', 'author': 'Jane Doe', 'date': '2024-01-01'}
+    templates["custom_intro"],
+    {"title": "Analysis", "author": "Jane Doe", "date": "2024-01-01"},
 )
 ```
 
@@ -221,7 +223,7 @@ nb.extend_from_template(
 
 ```python
 # Add section to multiple notebooks
-store = NotebookStore('notebooks/')
+store = NotebookStore("notebooks/")
 
 for key in store:
     nb = store[key]
@@ -234,10 +236,10 @@ for key in store:
 
 ```python
 # Load existing
-nb = Notebook.from_file('existing.ipynb')
+nb = Notebook.from_file("existing.ipynb")
 
 # Modify
-nb[0]['source'] = "# Updated Title"
+nb[0]["source"] = "# Updated Title"
 nb.insert(2, nbformat.v4.new_markdown_cell("## New Section"))
 nb.append_code("# Additional code")
 

@@ -116,7 +116,7 @@ class Notebook(MutableSequence):
             self._nb.cells.append(cell)
 
     @classmethod
-    def from_file(cls, path: Union[str, Path]) -> 'Notebook':
+    def from_file(cls, path: Union[str, Path]) -> "Notebook":
         """Load notebook from file.
 
         Examples:
@@ -140,7 +140,7 @@ class Notebook(MutableSequence):
             )
 
         try:
-            with open(path, 'r', encoding='utf-8') as f:
+            with open(path, "r", encoding="utf-8") as f:
                 nb_node = nbformat.read(f, as_version=4)
         except NotJSONError as e:
             raise ValueError(
@@ -172,7 +172,7 @@ class Notebook(MutableSequence):
         save_path = Path(save_path)
         save_path.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(save_path, 'w', encoding='utf-8') as f:
+        with open(save_path, "w", encoding="utf-8") as f:
             nbformat.write(self._nb, f)
 
         self._path = save_path
@@ -215,7 +215,7 @@ class NotebookStore(MutableMapping):
         True
     """
 
-    def __init__(self, root_path: Union[str, Path] = '.', *, extension: str = '.ipynb'):
+    def __init__(self, root_path: Union[str, Path] = ".", *, extension: str = ".ipynb"):
         """Initialize store at root_path.
 
         Args:
@@ -371,7 +371,7 @@ def notebook_from_metadata(
         templates = _get_default_templates()
 
     if template_sequence is None:
-        template_sequence = ['intro', 'setup', 'load', 'explore']
+        template_sequence = ["intro", "setup", "load", "explore"]
 
     for template_name in template_sequence:
         if template_name in templates:
@@ -383,7 +383,7 @@ def notebook_from_metadata(
 def populate_notebook(
     metadata: Mapping,
     *,
-    template_sequence: Iterable[str] = ('intro', 'setup', 'load', 'explore'),
+    template_sequence: Iterable[str] = ("intro", "setup", "load", "explore"),
     templates: Optional[CellTemplates] = None,
     output_path: Optional[Union[str, Path]] = None,
     n_viz_cells: int = 0,
@@ -453,20 +453,20 @@ def _get_default_templates() -> CellTemplates:
 
     def _intro_template(meta: dict) -> Iterable[dict]:
         """Generate introduction cells from metadata."""
-        title = meta.get('title', meta.get('dataset_name', 'Dataset Analysis'))
+        title = meta.get("title", meta.get("dataset_name", "Dataset Analysis"))
         yield markdown_cell(f"# {title}")
 
-        if desc := meta.get('description', meta.get('dataset_description')):
+        if desc := meta.get("description", meta.get("dataset_description")):
             yield markdown_cell(f"**Description:** {desc}")
 
-        if src := meta.get('src'):
-            filename = meta.get('target_filename', src.split('/')[-1].split('?')[0])
+        if src := meta.get("src"):
+            filename = meta.get("target_filename", src.split("/")[-1].split("?")[0])
             yield markdown_cell(f"**Data Source:** [{filename}]({src})")
 
-        if viz_info := meta.get('viz_columns_info'):
+        if viz_info := meta.get("viz_columns_info"):
             yield markdown_cell(f"**Visualization notes:** {viz_info}")
 
-        if related := meta.get('related_code'):
+        if related := meta.get("related_code"):
             yield markdown_cell(f"**Related code:** {related}")
 
     def _setup_template(meta: dict) -> Iterable[dict]:
@@ -476,11 +476,11 @@ def _get_default_templates() -> CellTemplates:
 
         # Data parameters cell
         params_lines = []
-        if ext := meta.get('ext'):
+        if ext := meta.get("ext"):
             params_lines.append(f"ext = {repr(ext)}")
-        if src := meta.get('src'):
+        if src := meta.get("src"):
             params_lines.append(f"src = {repr(src)}")
-        if target := meta.get('target_filename'):
+        if target := meta.get("target_filename"):
             params_lines.append(f"target_filename = {repr(target)}")
 
         if params_lines:
@@ -489,10 +489,10 @@ def _get_default_templates() -> CellTemplates:
         # Install and import cell
         yield markdown_cell("### Install and Import")
 
-        install_pkgs = meta.get('install', 'cosmograph tabled cosmodata')
-        installs_not_to_import = meta.get('installs_not_to_import', ['cosmograph'])
+        install_pkgs = meta.get("install", "cosmograph tabled cosmodata")
+        installs_not_to_import = meta.get("installs_not_to_import", ["cosmograph"])
         custom_imports = meta.get(
-            'imports', 'from functools import partial\nfrom cosmograph import cosmo'
+            "imports", "from functools import partial\nfrom cosmograph import cosmo"
         )
 
         install_lines = [
@@ -531,8 +531,8 @@ data = cosmodata.acquire_data(src, target_filename, getter=getter)"""
         """Generate data exploration cells."""
         yield markdown_cell("## Explore Data")
 
-        peep_mode = meta.get('peep_mode', 'short')
-        peep_exclude = meta.get('peep_exclude_cols', [])
+        peep_mode = meta.get("peep_mode", "short")
+        peep_exclude = meta.get("peep_exclude_cols", [])
 
         peep_code = f"""mode = {repr(peep_mode)}  # Options: 'short', 'sample', 'stats'
 exclude_cols = {repr(peep_exclude)}
@@ -541,10 +541,10 @@ cosmodata.print_dataframe_info(data, exclude_cols, mode=mode)"""
 
         yield code_cell(peep_code)
 
-    templates.register('intro', _intro_template)
-    templates.register('setup', _setup_template)
-    templates.register('load', _load_template)
-    templates.register('explore', _explore_template)
+    templates.register("intro", _intro_template)
+    templates.register("setup", _setup_template)
+    templates.register("load", _load_template)
+    templates.register("explore", _explore_template)
 
     return templates
 

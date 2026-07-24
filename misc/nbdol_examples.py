@@ -36,7 +36,7 @@ def example_basic_creation():
     print(f"First cell type: {nb[0]['cell_type']}")
 
     # Save to file
-    nb.save('basic_analysis.ipynb')
+    nb.save("basic_analysis.ipynb")
 
     return nb
 
@@ -48,28 +48,28 @@ def example_basic_creation():
 
 def example_notebook_store():
     """Manage notebooks as a dict-like collection."""
-    store = NotebookStore('my_notebooks/')
+    store = NotebookStore("my_notebooks/")
 
     # Create and save notebooks using dict syntax
     nb1 = Notebook()
     nb1.append_markdown("# Notebook 1")
-    store['analysis_01'] = nb1
+    store["analysis_01"] = nb1
 
     nb2 = Notebook()
     nb2.append_markdown("# Notebook 2")
-    store['analysis_02'] = nb2
+    store["analysis_02"] = nb2
 
     # List all notebooks
     print("Available notebooks:", list(store))
 
     # Check existence
-    if 'analysis_01' in store:
+    if "analysis_01" in store:
         print("Found analysis_01")
 
     # Load and modify
-    nb = store['analysis_01']
+    nb = store["analysis_01"]
     nb.append_code("# Additional code")
-    store['analysis_01'] = nb  # Save changes
+    store["analysis_01"] = nb  # Save changes
 
     # Delete a notebook
     # del store['analysis_02']
@@ -86,28 +86,28 @@ def example_from_metadata():
     """Generate notebook from metadata dict."""
     # Simulate cosmodata metadata
     metadata = {
-        'title': 'Bitcoin Trading Data',
-        'description': 'Historical Bitcoin prices and trading volumes',
-        'src': 'https://example.com/bitcoin.parquet',
-        'target_filename': 'bitcoin.parquet',
-        'ext': None,
-        'install': 'cosmograph tabled cosmodata pandas',
-        'installs_not_to_import': ['cosmograph'],
-        'imports': 'from functools import partial\nfrom cosmograph import cosmo',
-        'peep_mode': 'short',
-        'peep_exclude_cols': [],
+        "title": "Bitcoin Trading Data",
+        "description": "Historical Bitcoin prices and trading volumes",
+        "src": "https://example.com/bitcoin.parquet",
+        "target_filename": "bitcoin.parquet",
+        "ext": None,
+        "install": "cosmograph tabled cosmodata pandas",
+        "installs_not_to_import": ["cosmograph"],
+        "imports": "from functools import partial\nfrom cosmograph import cosmo",
+        "peep_mode": "short",
+        "peep_exclude_cols": [],
     }
 
     # Create notebook with default templates
     nb = notebook_from_metadata(
-        metadata, template_sequence=['intro', 'setup', 'load', 'explore']
+        metadata, template_sequence=["intro", "setup", "load", "explore"]
     )
 
     # Add custom sections
     nb.append_markdown("## Visualization")
     nb.append_code("# Add visualization code here")
 
-    nb.save('bitcoin_analysis.ipynb')
+    nb.save("bitcoin_analysis.ipynb")
 
     return nb
 
@@ -130,34 +130,34 @@ def example_custom_templates():
         )
         yield nbformat.v4.new_markdown_cell("---")
 
-        if 'description' in meta:
+        if "description" in meta:
             yield nbformat.v4.new_markdown_cell(f"## Overview\n\n{meta['description']}")
 
     def my_imports_template(meta):
         """Custom imports template."""
-        packages = meta.get('packages', ['pandas', 'numpy'])
-        import_lines = '\n'.join(f"import {pkg}" for pkg in packages)
+        packages = meta.get("packages", ["pandas", "numpy"])
+        import_lines = "\n".join(f"import {pkg}" for pkg in packages)
         yield nbformat.v4.new_code_cell(import_lines)
 
     # Register templates
-    templates.register('custom_intro', my_intro_template)
-    templates.register('custom_imports', my_imports_template)
+    templates.register("custom_intro", my_intro_template)
+    templates.register("custom_imports", my_imports_template)
 
     # Use custom templates
     metadata = {
-        'title': 'My Analysis',
-        'author': 'Data Scientist',
-        'description': 'Analysis of interesting data',
-        'packages': ['pandas', 'matplotlib', 'seaborn'],
+        "title": "My Analysis",
+        "author": "Data Scientist",
+        "description": "Analysis of interesting data",
+        "packages": ["pandas", "matplotlib", "seaborn"],
     }
 
     nb = notebook_from_metadata(
         metadata,
         templates=templates,
-        template_sequence=['custom_intro', 'custom_imports'],
+        template_sequence=["custom_intro", "custom_imports"],
     )
 
-    nb.save('custom_template_notebook.ipynb')
+    nb.save("custom_template_notebook.ipynb")
 
     return nb
 
@@ -171,34 +171,34 @@ def example_batch_generation():
     """Generate notebooks for multiple datasets."""
     # Simulate multiple datasets
     datasets = {
-        'bitcoin': {
-            'title': 'Bitcoin Data',
-            'description': 'BTC price history',
-            'src': 'https://example.com/bitcoin.parquet',
-            'target_filename': 'bitcoin.parquet',
+        "bitcoin": {
+            "title": "Bitcoin Data",
+            "description": "BTC price history",
+            "src": "https://example.com/bitcoin.parquet",
+            "target_filename": "bitcoin.parquet",
         },
-        'ethereum': {
-            'title': 'Ethereum Data',
-            'description': 'ETH price history',
-            'src': 'https://example.com/ethereum.parquet',
-            'target_filename': 'ethereum.parquet',
+        "ethereum": {
+            "title": "Ethereum Data",
+            "description": "ETH price history",
+            "src": "https://example.com/ethereum.parquet",
+            "target_filename": "ethereum.parquet",
         },
-        'weather': {
-            'title': 'Weather Data',
-            'description': 'Historical weather records',
-            'src': 'https://example.com/weather.csv',
-            'target_filename': 'weather.csv',
+        "weather": {
+            "title": "Weather Data",
+            "description": "Historical weather records",
+            "src": "https://example.com/weather.csv",
+            "target_filename": "weather.csv",
         },
     }
 
     # Create store for output
-    store = NotebookStore('generated_notebooks/')
+    store = NotebookStore("generated_notebooks/")
 
     # Generate notebook for each dataset
     for key, metadata in datasets.items():
         nb = populate_notebook(
             metadata,
-            template_sequence=['intro', 'setup', 'load', 'explore'],
+            template_sequence=["intro", "setup", "load", "explore"],
             n_viz_cells=3,
         )
         store[key] = nb
@@ -214,17 +214,17 @@ def example_batch_generation():
 
 def example_modify_existing():
     """Load and modify existing notebooks."""
-    store = NotebookStore('notebooks/')
+    store = NotebookStore("notebooks/")
 
     # Load existing notebook
-    nb = store['analysis']
+    nb = store["analysis"]
 
     # Insert cell at specific position
     nb.insert(2, nbformat.v4.new_markdown_cell("## New Section"))
 
     # Modify existing cell
-    if nb[0]['cell_type'] == 'markdown':
-        nb[0]['source'] = "# Updated Title"
+    if nb[0]["cell_type"] == "markdown":
+        nb[0]["source"] = "# Updated Title"
 
     # Append new sections
     nb.append_markdown("## Additional Analysis")
@@ -234,7 +234,7 @@ def example_modify_existing():
     # del nb[5]
 
     # Save changes
-    store['analysis'] = nb
+    store["analysis"] = nb
 
     return nb
 
@@ -268,8 +268,8 @@ def example_sequence_operations():
         print(f"Cell {i}: {cell['cell_type']}")
 
     # Check cell types
-    markdown_cells = [cell for cell in nb if cell['cell_type'] == 'markdown']
-    code_cells = [cell for cell in nb if cell['cell_type'] == 'code']
+    markdown_cells = [cell for cell in nb if cell["cell_type"] == "markdown"]
+    code_cells = [cell for cell in nb if cell["cell_type"] == "code"]
 
     print(f"Markdown cells: {len(markdown_cells)}, Code cells: {len(code_cells)}")
 
@@ -281,7 +281,7 @@ def example_sequence_operations():
 # ============================================================================
 
 
-def example_cosmodata_integration(metas, output_dir='cosmo_notebooks/notebooks/'):
+def example_cosmodata_integration(metas, output_dir="cosmo_notebooks/notebooks/"):
     """Real-world example with cosmodata integration.
 
     Args:
@@ -291,7 +291,7 @@ def example_cosmodata_integration(metas, output_dir='cosmo_notebooks/notebooks/'
     store = NotebookStore(output_dir)
 
     # Generate notebooks for specific datasets
-    datasets_to_generate = ['bitcoin', 'weather', 'covid']
+    datasets_to_generate = ["bitcoin", "weather", "covid"]
 
     for dataset_key in datasets_to_generate:
         if dataset_key not in metas:
@@ -302,14 +302,14 @@ def example_cosmodata_integration(metas, output_dir='cosmo_notebooks/notebooks/'
 
         # Create notebook from metadata
         nb = populate_notebook(
-            meta, template_sequence=['intro', 'setup', 'load', 'explore'], n_viz_cells=5
+            meta, template_sequence=["intro", "setup", "load", "explore"], n_viz_cells=5
         )
 
         # Add dataset-specific customizations
-        if dataset_key == 'bitcoin':
+        if dataset_key == "bitcoin":
             nb.append_markdown("## Price Analysis")
             nb.append_code("# Analyze price trends\ndf['price'].plot()")
-        elif dataset_key == 'weather':
+        elif dataset_key == "weather":
             nb.append_markdown("## Temperature Analysis")
             nb.append_code("# Analyze temperature patterns\ndf['temperature'].hist()")
 
@@ -327,7 +327,7 @@ def example_cosmodata_integration(metas, output_dir='cosmo_notebooks/notebooks/'
 
 def example_batch_update():
     """Add a common section to multiple existing notebooks."""
-    store = NotebookStore('notebooks/')
+    store = NotebookStore("notebooks/")
 
     # New section to add
     new_section = [
@@ -369,7 +369,7 @@ def example_export_to_dict():
     return nb_dict
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print("Running nbdol examples...\n")
 
     # Run basic examples
