@@ -1,0 +1,227 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nbdol.nbdol_migration &mdash; nbdol 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="nbdol.tools" href="tools.html" />
+    <link rel="prev" title="nbdol.base" href="base.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            nbdol
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../nbdol.html">nbdol</a></li>
+<li class="toctree-l1"><a class="reference internal" href="base.html">nbdol.base</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">nbdol.nbdol_migration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#nbdol.nbdol_migration.add_section_to_existing_notebooks"><code class="docutils literal notranslate"><span class="pre">add_section_to_existing_notebooks()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#nbdol.nbdol_migration.create_custom_analysis_notebook"><code class="docutils literal notranslate"><span class="pre">create_custom_analysis_notebook()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#nbdol.nbdol_migration.create_notebook"><code class="docutils literal notranslate"><span class="pre">create_notebook()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#nbdol.nbdol_migration.generate_notebooks_from_cosmodata"><code class="docutils literal notranslate"><span class="pre">generate_notebooks_from_cosmodata()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">nbdol.tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="util.html">nbdol.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">nbdol</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">nbdol.nbdol_migration</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/module_docs/nbdol/nbdol_migration.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-nbdol.nbdol_migration">
+<span id="nbdol-nbdol-migration"></span><h1>nbdol.nbdol_migration<a class="headerlink" href="#module-nbdol.nbdol_migration" title="Link to this heading"></a></h1>
+<p>Example of migrating from old notebook_gen.py to nbdol.</p>
+<p>This shows how to refactor the original NotebookParams-based approach
+to use the new nbdol module with built-in protocols.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="nbdol.nbdol_migration.add_section_to_existing_notebooks">
+<span class="sig-prename descclassname"><span class="pre">nbdol.nbdol_migration.</span></span><span class="sig-name descname"><span class="pre">add_section_to_existing_notebooks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">store</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="base.html#nbdol.base.NotebookStore" title="nbdol.base.NotebookStore"><span class="pre">NotebookStore</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook_keys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/nbdol/nbdol_migration.html#add_section_to_existing_notebooks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nbdol.nbdol_migration.add_section_to_existing_notebooks" title="Link to this definition"></a></dt>
+<dd><p>Add a new section to existing notebooks in a store.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>store</strong> – NotebookStore instance</p></li>
+<li><p><strong>section_title</strong> – Title for the new section</p></li>
+<li><p><strong>section_code</strong> – Code to add in the new section</p></li>
+<li><p><strong>notebook_keys</strong> – Optional list of specific notebooks to modify</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">store</span> <span class="o">=</span> <span class="n">NotebookStore</span><span class="p">(</span><span class="s1">&#39;notebooks/&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">add_section_to_existing_notebooks</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">store</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;## Statistical Analysis&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;df.describe()&quot;</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nbdol.nbdol_migration.create_custom_analysis_notebook">
+<span class="sig-prename descclassname"><span class="pre">nbdol.nbdol_migration.</span></span><span class="sig-name descname"><span class="pre">create_custom_analysis_notebook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_analysis_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="base.html#nbdol.base.Notebook" title="nbdol.base.Notebook"><span class="pre">Notebook</span></a></span></span><a class="reference internal" href="../../_modules/nbdol/nbdol_migration.html#create_custom_analysis_notebook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nbdol.nbdol_migration.create_custom_analysis_notebook" title="Link to this definition"></a></dt>
+<dd><p>Create notebook with custom analysis section.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nb</span> <span class="o">=</span> <span class="n">create_custom_analysis_notebook</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s1">&#39;bitcoin&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">metas</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">custom_analysis_code</span><span class="o">=</span><span class="s1">&#39;df.plot()&#39;</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nbdol.nbdol_migration.create_notebook">
+<span class="sig-prename descclassname"><span class="pre">nbdol.nbdol_migration.</span></span><span class="sig-name descname"><span class="pre">create_notebook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_viz_cells</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="base.html#nbdol.base.Notebook" title="nbdol.base.Notebook"><span class="pre">Notebook</span></a></span></span><a class="reference internal" href="../../_modules/nbdol/nbdol_migration.html#create_notebook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nbdol.nbdol_migration.create_notebook" title="Link to this definition"></a></dt>
+<dd><p>Generate a Jupyter notebook from metadata using nbdol.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metadata</strong> – Mapping describing the notebook. Provide at least ‘src’,
+‘target_filename’, and either ‘title’/’description’ or their legacy
+aliases ‘dataset_name’/’dataset_description’.</p></li>
+<li><p><strong>output_path</strong> – Optional path to save the notebook.</p></li>
+<li><p><strong>n_viz_cells</strong> – Number of empty visualization cells to create.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Notebook instance (can be further modified)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">... </span>    <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Test Dataset&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;A test dataset&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s1">&#39;src&#39;</span><span class="p">:</span> <span class="s1">&#39;https://example.com/data.csv&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s1">&#39;target_filename&#39;</span><span class="p">:</span> <span class="s1">&#39;data.csv&#39;</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nb</span> <span class="o">=</span> <span class="n">create_notebook</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">nb</span><span class="p">,</span> <span class="n">Notebook</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nbdol.nbdol_migration.generate_notebooks_from_cosmodata">
+<span class="sig-prename descclassname"><span class="pre">nbdol.nbdol_migration.</span></span><span class="sig-name descname"><span class="pre">generate_notebooks_from_cosmodata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metas</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'notebooks/'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_keys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="base.html#nbdol.base.NotebookStore" title="nbdol.base.NotebookStore"><span class="pre">NotebookStore</span></a></span></span><a class="reference internal" href="../../_modules/nbdol/nbdol_migration.html#generate_notebooks_from_cosmodata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nbdol.nbdol_migration.generate_notebooks_from_cosmodata" title="Link to this definition"></a></dt>
+<dd><p>Generate notebooks for multiple datasets from cosmodata.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metas</strong> – cosmodata.metas mapping object</p></li>
+<li><p><strong>output_dir</strong> – Directory to save notebooks</p></li>
+<li><p><strong>dataset_keys</strong> – Optional list of specific dataset keys to generate.
+If None, generates for all datasets.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>NotebookStore containing all generated notebooks</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">cosmodata</span><span class="w"> </span><span class="kn">import</span> <span class="n">metas</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">store</span> <span class="o">=</span> <span class="n">generate_notebooks_from_cosmodata</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">metas</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">dataset_keys</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bitcoin&#39;</span><span class="p">,</span> <span class="s1">&#39;weather&#39;</span><span class="p">]</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;bitcoin&#39;</span> <span class="ow">in</span> <span class="n">store</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="base.html" class="btn btn-neutral float-left" title="nbdol.base" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tools.html" class="btn btn-neutral float-right" title="nbdol.tools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

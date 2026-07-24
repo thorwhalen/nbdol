@@ -1,0 +1,400 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nbdol &mdash; nbdol 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="nbdol.base" href="nbdol/base.html" />
+    <link rel="prev" title="Welcome to nbdol’s documentation!" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            nbdol
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">nbdol</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#nbdol.CellTemplates"><code class="docutils literal notranslate"><span class="pre">CellTemplates</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#nbdol.CellTemplates.register"><code class="docutils literal notranslate"><span class="pre">CellTemplates.register()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#nbdol.Notebook"><code class="docutils literal notranslate"><span class="pre">Notebook</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#nbdol.Notebook.append_code"><code class="docutils literal notranslate"><span class="pre">Notebook.append_code()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nbdol.Notebook.append_markdown"><code class="docutils literal notranslate"><span class="pre">Notebook.append_markdown()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nbdol.Notebook.cells"><code class="docutils literal notranslate"><span class="pre">Notebook.cells</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nbdol.Notebook.extend_from_template"><code class="docutils literal notranslate"><span class="pre">Notebook.extend_from_template()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nbdol.Notebook.from_file"><code class="docutils literal notranslate"><span class="pre">Notebook.from_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nbdol.Notebook.insert"><code class="docutils literal notranslate"><span class="pre">Notebook.insert()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nbdol.Notebook.metadata"><code class="docutils literal notranslate"><span class="pre">Notebook.metadata</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nbdol.Notebook.save"><code class="docutils literal notranslate"><span class="pre">Notebook.save()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nbdol.Notebook.to_dict"><code class="docutils literal notranslate"><span class="pre">Notebook.to_dict()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#nbdol.NotebookStore"><code class="docutils literal notranslate"><span class="pre">NotebookStore</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#nbdol.code_cell"><code class="docutils literal notranslate"><span class="pre">code_cell()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#nbdol.markdown_cell"><code class="docutils literal notranslate"><span class="pre">markdown_cell()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#nbdol.notebook_from_metadata"><code class="docutils literal notranslate"><span class="pre">notebook_from_metadata()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#nbdol.populate_notebook"><code class="docutils literal notranslate"><span class="pre">populate_notebook()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="nbdol/base.html">nbdol.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nbdol/nbdol_migration.html">nbdol.nbdol_migration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nbdol/tools.html">nbdol.tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nbdol/util.html">nbdol.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">nbdol</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">nbdol</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/module_docs/nbdol.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-nbdol">
+<span id="nbdol"></span><h1>nbdol<a class="headerlink" href="#module-nbdol" title="Link to this heading"></a></h1>
+<p>Notebook Data Object Layer - Pythonic interface for Jupyter notebook manipulation.</p>
+<p>This module provides a composable, functional approach to creating and modifying
+Jupyter notebooks using standard Python protocols (Mapping, Sequence, Iterable).</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">nbdol</span><span class="w"> </span><span class="kn">import</span> <span class="n">Notebook</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nb</span> <span class="o">=</span> <span class="n">Notebook</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nb</span><span class="o">.</span><span class="n">append_markdown</span><span class="p">(</span><span class="s2">&quot;# Analysis&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nb</span><span class="o">.</span><span class="n">append_code</span><span class="p">(</span><span class="s2">&quot;import pandas as pd&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">nb</span><span class="p">)</span>
+<span class="go">2</span>
+</pre></div>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="nbdol.CellTemplates">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nbdol.</span></span><span class="sig-name descname"><span class="pre">CellTemplates</span></span><a class="reference internal" href="../_modules/nbdol/base.html#CellTemplates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nbdol.CellTemplates" title="Link to this definition"></a></dt>
+<dd><p>Registry of cell template generators.</p>
+<p>Templates are functions that take metadata and yield cell dicts.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">templates</span> <span class="o">=</span> <span class="n">CellTemplates</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">my_template</span><span class="p">(</span><span class="n">meta</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">yield</span> <span class="n">nbformat</span><span class="o">.</span><span class="n">v4</span><span class="o">.</span><span class="n">new_markdown_cell</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# </span><span class="si">{</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">templates</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;intro&#39;</span><span class="p">,</span> <span class="n">my_template</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cells</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">templates</span><span class="p">[</span><span class="s1">&#39;intro&#39;</span><span class="p">]({</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Test&#39;</span><span class="p">}))</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="nbdol.CellTemplates.register">
+<span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/nbdol/base.html#CellTemplates.register"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nbdol.CellTemplates.register" title="Link to this definition"></a></dt>
+<dd><p>Register a template function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – Name for the template</p></li>
+<li><p><strong>template_func</strong> – Function that takes metadata and yields cells</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">templates</span> <span class="o">=</span> <span class="n">CellTemplates</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">templates</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;intro&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="p">[])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nbdol.Notebook">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nbdol.</span></span><span class="sig-name descname"><span class="pre">Notebook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cells</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nbdol/base.html#Notebook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nbdol.Notebook" title="Link to this definition"></a></dt>
+<dd><p>A Jupyter notebook represented as a mutable sequence of cells.</p>
+<p>Wraps nbformat.NotebookNode and provides a list-like interface to cells.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nb</span> <span class="o">=</span> <span class="n">Notebook</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nb</span><span class="o">.</span><span class="n">append_markdown</span><span class="p">(</span><span class="s2">&quot;# Title&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nb</span><span class="o">.</span><span class="n">append_code</span><span class="p">(</span><span class="s2">&quot;x = 42&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">nb</span><span class="p">)</span>
+<span class="go">2</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="nbdol.Notebook.append_code">
+<span class="sig-name descname"><span class="pre">append_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/nbdol/base.html#Notebook.append_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nbdol.Notebook.append_code" title="Link to this definition"></a></dt>
+<dd><p>Append a code cell.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nb</span> <span class="o">=</span> <span class="n">Notebook</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nb</span><span class="o">.</span><span class="n">append_code</span><span class="p">(</span><span class="s2">&quot;x = 42&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nb</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;cell_type&#39;</span><span class="p">]</span>
+<span class="go">&#39;code&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nbdol.Notebook.append_markdown">
+<span class="sig-name descname"><span class="pre">append_markdown</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/nbdol/base.html#Notebook.append_markdown"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nbdol.Notebook.append_markdown" title="Link to this definition"></a></dt>
+<dd><p>Append a markdown cell.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nb</span> <span class="o">=</span> <span class="n">Notebook</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nb</span><span class="o">.</span><span class="n">append_markdown</span><span class="p">(</span><span class="s2">&quot;# Title&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nb</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;cell_type&#39;</span><span class="p">]</span>
+<span class="go">&#39;markdown&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="nbdol.Notebook.cells">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">cells</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span></span><a class="headerlink" href="#nbdol.Notebook.cells" title="Link to this definition"></a></dt>
+<dd><p>Direct access to cells list (for advanced usage).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nbdol.Notebook.extend_from_template">
+<span class="sig-name descname"><span class="pre">extend_from_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/nbdol/base.html#Notebook.extend_from_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nbdol.Notebook.extend_from_template" title="Link to this definition"></a></dt>
+<dd><p>Add cells from a template function using metadata.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>template_func</strong> – Function that takes metadata and yields cell dicts</p></li>
+<li><p><strong>metadata</strong> – Metadata to pass to template function</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">my_template</span><span class="p">(</span><span class="n">meta</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">yield</span> <span class="n">nbformat</span><span class="o">.</span><span class="n">v4</span><span class="o">.</span><span class="n">new_markdown_cell</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# </span><span class="si">{</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nb</span> <span class="o">=</span> <span class="n">Notebook</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nb</span><span class="o">.</span><span class="n">extend_from_template</span><span class="p">(</span><span class="n">my_template</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Test&#39;</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">nb</span><span class="p">)</span>
+<span class="go">1</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nbdol.Notebook.from_file">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="nbdol/base.html#nbdol.base.Notebook" title="nbdol.base.Notebook"><span class="pre">Notebook</span></a></span></span><a class="reference internal" href="../_modules/nbdol/base.html#Notebook.from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nbdol.Notebook.from_file" title="Link to this definition"></a></dt>
+<dd><p>Load notebook from file.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nb</span> <span class="o">=</span> <span class="n">Notebook</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s1">&#39;analysis.ipynb&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nbdol.Notebook.insert">
+<span class="sig-name descname"><span class="pre">insert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/nbdol/base.html#Notebook.insert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nbdol.Notebook.insert" title="Link to this definition"></a></dt>
+<dd><p>Insert cell at index.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="nbdol.Notebook.metadata">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">metadata</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></span><a class="headerlink" href="#nbdol.Notebook.metadata" title="Link to this definition"></a></dt>
+<dd><p>Access notebook metadata.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nbdol.Notebook.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/nbdol/base.html#Notebook.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nbdol.Notebook.save" title="Link to this definition"></a></dt>
+<dd><p>Save notebook to file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> – Path to save to. If None, uses self._path from loading/previous save.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nb</span> <span class="o">=</span> <span class="n">Notebook</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nb</span><span class="o">.</span><span class="n">append_markdown</span><span class="p">(</span><span class="s2">&quot;# Test&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nb</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;output.ipynb&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nbdol.Notebook.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../_modules/nbdol/base.html#Notebook.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nbdol.Notebook.to_dict" title="Link to this definition"></a></dt>
+<dd><p>Export as notebook JSON structure.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nb</span> <span class="o">=</span> <span class="n">Notebook</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;nbformat&#39;</span><span class="p">]</span>
+<span class="go">4</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nbdol.NotebookStore">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nbdol.</span></span><span class="sig-name descname"><span class="pre">NotebookStore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'.ipynb'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nbdol/base.html#NotebookStore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nbdol.NotebookStore" title="Link to this definition"></a></dt>
+<dd><p>File-based notebook storage with dict-like interface.</p>
+<p>Provides a mapping abstraction over a directory of notebook files.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">store</span> <span class="o">=</span> <span class="n">NotebookStore</span><span class="p">(</span><span class="s1">&#39;notebooks/&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nb</span> <span class="o">=</span> <span class="n">Notebook</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="p">[</span><span class="s1">&#39;analysis&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nb</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;analysis&#39;</span> <span class="ow">in</span> <span class="n">store</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nbdol.code_cell">
+<span class="sig-prename descclassname"><span class="pre">nbdol.</span></span><span class="sig-name descname"><span class="pre">code_cell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../_modules/nbdol/base.html#code_cell"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nbdol.code_cell" title="Link to this definition"></a></dt>
+<dd><p>Create a code cell dict.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cell</span> <span class="o">=</span> <span class="n">code_cell</span><span class="p">(</span><span class="s2">&quot;x = 42&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cell</span><span class="p">[</span><span class="s1">&#39;cell_type&#39;</span><span class="p">]</span>
+<span class="go">&#39;code&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nbdol.markdown_cell">
+<span class="sig-prename descclassname"><span class="pre">nbdol.</span></span><span class="sig-name descname"><span class="pre">markdown_cell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../_modules/nbdol/base.html#markdown_cell"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nbdol.markdown_cell" title="Link to this definition"></a></dt>
+<dd><p>Create a markdown cell dict.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cell</span> <span class="o">=</span> <span class="n">markdown_cell</span><span class="p">(</span><span class="s2">&quot;# Title&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cell</span><span class="p">[</span><span class="s1">&#39;cell_type&#39;</span><span class="p">]</span>
+<span class="go">&#39;markdown&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nbdol.notebook_from_metadata">
+<span class="sig-prename descclassname"><span class="pre">nbdol.</span></span><span class="sig-name descname"><span class="pre">notebook_from_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">templates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="nbdol/base.html#nbdol.base.CellTemplates" title="nbdol.base.CellTemplates"><span class="pre">CellTemplates</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template_sequence</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="nbdol/base.html#nbdol.base.Notebook" title="nbdol.base.Notebook"><span class="pre">Notebook</span></a></span></span><a class="reference internal" href="../_modules/nbdol/base.html#notebook_from_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nbdol.notebook_from_metadata" title="Link to this definition"></a></dt>
+<dd><p>Create notebook from metadata dict using template sequence.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metadata</strong> – Metadata dict with notebook parameters</p></li>
+<li><p><strong>templates</strong> – CellTemplates instance to use. If None, uses default templates.</p></li>
+<li><p><strong>template_sequence</strong> – Sequence of template names to apply</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Populated Notebook instance</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nb</span> <span class="o">=</span> <span class="n">notebook_from_metadata</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Bitcoin&#39;</span><span class="p">,</span> <span class="s1">&#39;src&#39;</span><span class="p">:</span> <span class="s1">&#39;http://...&#39;</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="n">template_sequence</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;intro&#39;</span><span class="p">,</span> <span class="s1">&#39;setup&#39;</span><span class="p">]</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nbdol.populate_notebook">
+<span class="sig-prename descclassname"><span class="pre">nbdol.</span></span><span class="sig-name descname"><span class="pre">populate_notebook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Mapping</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">template_sequence</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">('intro',</span> <span class="pre">'setup',</span> <span class="pre">'load',</span> <span class="pre">'explore')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">templates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="nbdol/base.html#nbdol.base.CellTemplates" title="nbdol.base.CellTemplates"><span class="pre">CellTemplates</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_viz_cells</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="nbdol/base.html#nbdol.base.Notebook" title="nbdol.base.Notebook"><span class="pre">Notebook</span></a></span></span><a class="reference internal" href="../_modules/nbdol/base.html#populate_notebook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nbdol.populate_notebook" title="Link to this definition"></a></dt>
+<dd><p>Higher-level function to create and optionally save populated notebook.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metadata</strong> – Metadata mapping with notebook parameters</p></li>
+<li><p><strong>template_sequence</strong> – Sequence of template names to apply</p></li>
+<li><p><strong>templates</strong> – CellTemplates instance to use</p></li>
+<li><p><strong>output_path</strong> – Optional path to save notebook</p></li>
+<li><p><strong>n_viz_cells</strong> – Number of empty visualization cells to add at end</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Populated Notebook instance</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nb</span> <span class="o">=</span> <span class="n">populate_notebook</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Bitcoin&#39;</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="n">output_path</span><span class="o">=</span><span class="s1">&#39;bitcoin.ipynb&#39;</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to nbdol’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="nbdol/base.html" class="btn btn-neutral float-right" title="nbdol.base" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

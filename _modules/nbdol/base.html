@@ -1,0 +1,708 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nbdol.base &mdash; nbdol 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            nbdol
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/nbdol.html">nbdol</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/nbdol/base.html">nbdol.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/nbdol/nbdol_migration.html">nbdol.nbdol_migration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/nbdol/tools.html">nbdol.tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/nbdol/util.html">nbdol.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">nbdol</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">nbdol.base</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for nbdol.base</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Base classes for notebook manipulation using built-in protocols.</span>
+
+<span class="sd">This module provides the core abstractions for working with Jupyter notebooks</span>
+<span class="sd">as native Python data structures.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">MutableSequence</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Iterator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">nbformat</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nbformat.notebooknode</span><span class="w"> </span><span class="kn">import</span> <span class="n">NotebookNode</span>
+
+
+<div class="viewcode-block" id="Notebook">
+<a class="viewcode-back" href="../../module_docs/nbdol/base.html#nbdol.Notebook">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Notebook</span><span class="p">(</span><span class="n">MutableSequence</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A Jupyter notebook represented as a mutable sequence of cells.</span>
+
+<span class="sd">    Wraps nbformat.NotebookNode and provides a list-like interface to cells.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; nb = Notebook()</span>
+<span class="sd">        &gt;&gt;&gt; nb.append_markdown(&quot;# Title&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; nb.append_code(&quot;x = 42&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; len(nb)</span>
+<span class="sd">        2</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">cells</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize notebook with optional cells and path.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cells: Optional list of cell dicts to initialize with</span>
+<span class="sd">            path: Optional path for saving (set when loaded from file)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">cells</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_nb</span> <span class="o">=</span> <span class="n">nbformat</span><span class="o">.</span><span class="n">v4</span><span class="o">.</span><span class="n">new_notebook</span><span class="p">(</span><span class="n">cells</span><span class="o">=</span><span class="n">cells</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_nb</span> <span class="o">=</span> <span class="n">nbformat</span><span class="o">.</span><span class="n">v4</span><span class="o">.</span><span class="n">new_notebook</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">if</span> <span class="n">path</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return number of cells.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nb</span><span class="o">.</span><span class="n">cells</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">slice</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get cell(s) by index.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; nb = Notebook()</span>
+<span class="sd">            &gt;&gt;&gt; nb.append_markdown(&quot;# Test&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; nb[0][&#39;cell_type&#39;]</span>
+<span class="sd">            &#39;markdown&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nb</span><span class="o">.</span><span class="n">cells</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">slice</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set cell(s) by index.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nb</span><span class="o">.</span><span class="n">cells</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">slice</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete cell(s) by index.&quot;&quot;&quot;</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nb</span><span class="o">.</span><span class="n">cells</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Notebook.insert">
+<a class="viewcode-back" href="../../module_docs/nbdol/base.html#nbdol.Notebook.insert">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Insert cell at index.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nb</span><span class="o">.</span><span class="n">cells</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Notebook.append_markdown">
+<a class="viewcode-back" href="../../module_docs/nbdol/base.html#nbdol.Notebook.append_markdown">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append_markdown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Append a markdown cell.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; nb = Notebook()</span>
+<span class="sd">            &gt;&gt;&gt; nb.append_markdown(&quot;# Title&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; nb[-1][&#39;cell_type&#39;]</span>
+<span class="sd">            &#39;markdown&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cell</span> <span class="o">=</span> <span class="n">nbformat</span><span class="o">.</span><span class="n">v4</span><span class="o">.</span><span class="n">new_markdown_cell</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nb</span><span class="o">.</span><span class="n">cells</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Notebook.append_code">
+<a class="viewcode-back" href="../../module_docs/nbdol/base.html#nbdol.Notebook.append_code">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append_code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Append a code cell.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; nb = Notebook()</span>
+<span class="sd">            &gt;&gt;&gt; nb.append_code(&quot;x = 42&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; nb[-1][&#39;cell_type&#39;]</span>
+<span class="sd">            &#39;code&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cell</span> <span class="o">=</span> <span class="n">nbformat</span><span class="o">.</span><span class="n">v4</span><span class="o">.</span><span class="n">new_code_cell</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nb</span><span class="o">.</span><span class="n">cells</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Notebook.extend_from_template">
+<a class="viewcode-back" href="../../module_docs/nbdol/base.html#nbdol.Notebook.extend_from_template">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extend_from_template</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">template_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">dict</span><span class="p">]],</span> <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add cells from a template function using metadata.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            template_func: Function that takes metadata and yields cell dicts</span>
+<span class="sd">            metadata: Metadata to pass to template function</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; def my_template(meta):</span>
+<span class="sd">            ...     yield nbformat.v4.new_markdown_cell(f&quot;# {meta[&#39;title&#39;]}&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; nb = Notebook()</span>
+<span class="sd">            &gt;&gt;&gt; nb.extend_from_template(my_template, {&#39;title&#39;: &#39;Test&#39;})</span>
+<span class="sd">            &gt;&gt;&gt; len(nb)</span>
+<span class="sd">            1</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">template_func</span><span class="p">(</span><span class="n">metadata</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_nb</span><span class="o">.</span><span class="n">cells</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Notebook.from_file">
+<a class="viewcode-back" href="../../module_docs/nbdol/base.html#nbdol.Notebook.from_file">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s1">&#39;Notebook&#39;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load notebook from file.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; nb = Notebook.from_file(&#39;analysis.ipynb&#39;)  # doctest: +SKIP</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">nbformat.reader</span><span class="w"> </span><span class="kn">import</span> <span class="n">NotJSONError</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+        <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="c1"># Check if file exists</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Notebook file not found: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Check if file is empty</span>
+        <span class="n">file_size</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">file_size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Notebook file is empty (0 bytes): </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;Please ensure the file contains valid notebook JSON.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">nb_node</span> <span class="o">=</span> <span class="n">nbformat</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">as_version</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">NotJSONError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;File does not contain valid notebook JSON: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;File size: </span><span class="si">{</span><span class="n">file_size</span><span class="si">}</span><span class="s2"> bytes</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Original error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+
+        <span class="n">instance</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">_nb</span> <span class="o">=</span> <span class="n">nb_node</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="k">return</span> <span class="n">instance</span></div>
+
+
+<div class="viewcode-block" id="Notebook.save">
+<a class="viewcode-back" href="../../module_docs/nbdol/base.html#nbdol.Notebook.save">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save notebook to file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path: Path to save to. If None, uses self._path from loading/previous save.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; nb = Notebook()</span>
+<span class="sd">            &gt;&gt;&gt; nb.append_markdown(&quot;# Test&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; nb.save(&#39;output.ipynb&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">save_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">if</span> <span class="n">path</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span>
+        <span class="k">if</span> <span class="n">save_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No path specified and notebook was not loaded from file&quot;</span><span class="p">)</span>
+
+        <span class="n">save_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">save_path</span><span class="p">)</span>
+        <span class="n">save_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">nbformat</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nb</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">save_path</span></div>
+
+
+<div class="viewcode-block" id="Notebook.to_dict">
+<a class="viewcode-back" href="../../module_docs/nbdol/base.html#nbdol.Notebook.to_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Export as notebook JSON structure.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; nb = Notebook()</span>
+<span class="sd">            &gt;&gt;&gt; d = nb.to_dict()</span>
+<span class="sd">            &gt;&gt;&gt; d[&#39;nbformat&#39;]</span>
+<span class="sd">            4</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Convert NotebookNode to dict</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">nbformat</span><span class="o">.</span><span class="n">writes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nb</span><span class="p">))</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cells</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Direct access to cells list (for advanced usage).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nb</span><span class="o">.</span><span class="n">cells</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Access notebook metadata.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nb</span><span class="o">.</span><span class="n">metadata</span></div>
+
+
+
+<div class="viewcode-block" id="NotebookStore">
+<a class="viewcode-back" href="../../module_docs/nbdol/base.html#nbdol.NotebookStore">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NotebookStore</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;File-based notebook storage with dict-like interface.</span>
+
+<span class="sd">    Provides a mapping abstraction over a directory of notebook files.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; store = NotebookStore(&#39;notebooks/&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; nb = Notebook()</span>
+<span class="sd">        &gt;&gt;&gt; store[&#39;analysis&#39;] = nb</span>
+<span class="sd">        &gt;&gt;&gt; &#39;analysis&#39; in store</span>
+<span class="sd">        True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">extension</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;.ipynb&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize store at root_path.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            root_path: Directory to store notebooks</span>
+<span class="sd">            extension: File extension for notebooks</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_root</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">root_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ext</span> <span class="o">=</span> <span class="n">extension</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_root</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_key_to_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert key to file path.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ext</span><span class="p">):</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">_ext</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_root</span> <span class="o">/</span> <span class="n">key</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_path_to_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert path to key (removes extension).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">path</span><span class="o">.</span><span class="n">stem</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Notebook</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load notebook by key.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; store = NotebookStore(&#39;notebooks/&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; nb = store[&#39;analysis&#39;]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key_to_path</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Notebook &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; not found at </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Notebook</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">notebook</span><span class="p">:</span> <span class="n">Notebook</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save notebook with key.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; store = NotebookStore(&#39;notebooks/&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; store[&#39;new&#39;] = Notebook()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key_to_path</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="n">notebook</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete notebook by key.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; store = NotebookStore(&#39;notebooks/&#39;)  # doctest: +SKIP</span>
+<span class="sd">            &gt;&gt;&gt; del store[&#39;old&#39;]  # doctest: +SKIP</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key_to_path</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Notebook &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; not found at </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">path</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over notebook keys.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; store = NotebookStore(&#39;notebooks/&#39;)  # doctest: +SKIP</span>
+<span class="sd">            &gt;&gt;&gt; list(store)  # doctest: +SKIP</span>
+<span class="sd">            [&#39;analysis&#39;, &#39;exploration&#39;]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_root</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;*</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_ext</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path_to_key</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return number of notebooks in store.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if notebook exists.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key_to_path</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="CellTemplates">
+<a class="viewcode-back" href="../../module_docs/nbdol/base.html#nbdol.CellTemplates">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CellTemplates</span><span class="p">(</span><span class="n">Mapping</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Registry of cell template generators.</span>
+
+<span class="sd">    Templates are functions that take metadata and yield cell dicts.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; templates = CellTemplates()</span>
+<span class="sd">        &gt;&gt;&gt; def my_template(meta):</span>
+<span class="sd">        ...     yield nbformat.v4.new_markdown_cell(f&quot;# {meta[&#39;title&#39;]}&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; templates.register(&#39;intro&#39;, my_template)</span>
+<span class="sd">        &gt;&gt;&gt; cells = list(templates[&#39;intro&#39;]({&#39;title&#39;: &#39;Test&#39;}))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize empty template registry.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_templates</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="CellTemplates.register">
+<a class="viewcode-back" href="../../module_docs/nbdol/base.html#nbdol.CellTemplates.register">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">template_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register a template function.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name: Name for the template</span>
+<span class="sd">            template_func: Function that takes metadata and yields cells</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; templates = CellTemplates()</span>
+<span class="sd">            &gt;&gt;&gt; templates.register(&#39;intro&#39;, lambda m: [])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_templates</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">template_func</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get template function by name.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_templates</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over template names.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_templates</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return number of registered templates.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_templates</span><span class="p">)</span></div>
+
+
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Iterable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">nbformat</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">nbdol.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Notebook</span><span class="p">,</span> <span class="n">CellTemplates</span>
+
+
+<div class="viewcode-block" id="notebook_from_metadata">
+<a class="viewcode-back" href="../../module_docs/nbdol/base.html#nbdol.notebook_from_metadata">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">notebook_from_metadata</span><span class="p">(</span>
+    <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">templates</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CellTemplates</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">template_sequence</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Notebook</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create notebook from metadata dict using template sequence.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        metadata: Metadata dict with notebook parameters</span>
+<span class="sd">        templates: CellTemplates instance to use. If None, uses default templates.</span>
+<span class="sd">        template_sequence: Sequence of template names to apply</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Populated Notebook instance</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; nb = notebook_from_metadata(</span>
+<span class="sd">        ...     {&#39;title&#39;: &#39;Bitcoin&#39;, &#39;src&#39;: &#39;http://...&#39;},</span>
+<span class="sd">        ...     template_sequence=[&#39;intro&#39;, &#39;setup&#39;]</span>
+<span class="sd">        ... )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nb</span> <span class="o">=</span> <span class="n">Notebook</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">templates</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">templates</span> <span class="o">=</span> <span class="n">_get_default_templates</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">template_sequence</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">template_sequence</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;intro&#39;</span><span class="p">,</span> <span class="s1">&#39;setup&#39;</span><span class="p">,</span> <span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="s1">&#39;explore&#39;</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">template_name</span> <span class="ow">in</span> <span class="n">template_sequence</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">template_name</span> <span class="ow">in</span> <span class="n">templates</span><span class="p">:</span>
+            <span class="n">nb</span><span class="o">.</span><span class="n">extend_from_template</span><span class="p">(</span><span class="n">templates</span><span class="p">[</span><span class="n">template_name</span><span class="p">],</span> <span class="n">metadata</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">nb</span></div>
+
+
+
+<div class="viewcode-block" id="populate_notebook">
+<a class="viewcode-back" href="../../module_docs/nbdol/base.html#nbdol.populate_notebook">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">populate_notebook</span><span class="p">(</span>
+    <span class="n">metadata</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">template_sequence</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;intro&#39;</span><span class="p">,</span> <span class="s1">&#39;setup&#39;</span><span class="p">,</span> <span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="s1">&#39;explore&#39;</span><span class="p">),</span>
+    <span class="n">templates</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CellTemplates</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">output_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">n_viz_cells</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Notebook</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Higher-level function to create and optionally save populated notebook.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        metadata: Metadata mapping with notebook parameters</span>
+<span class="sd">        template_sequence: Sequence of template names to apply</span>
+<span class="sd">        templates: CellTemplates instance to use</span>
+<span class="sd">        output_path: Optional path to save notebook</span>
+<span class="sd">        n_viz_cells: Number of empty visualization cells to add at end</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Populated Notebook instance</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; nb = populate_notebook(</span>
+<span class="sd">        ...     {&#39;title&#39;: &#39;Bitcoin&#39;},</span>
+<span class="sd">        ...     output_path=&#39;bitcoin.ipynb&#39;</span>
+<span class="sd">        ... )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nb</span> <span class="o">=</span> <span class="n">notebook_from_metadata</span><span class="p">(</span>
+        <span class="nb">dict</span><span class="p">(</span><span class="n">metadata</span><span class="p">),</span> <span class="n">templates</span><span class="o">=</span><span class="n">templates</span><span class="p">,</span> <span class="n">template_sequence</span><span class="o">=</span><span class="n">template_sequence</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">n_viz_cells</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">nb</span><span class="o">.</span><span class="n">append_markdown</span><span class="p">(</span><span class="s2">&quot;## Visualizations&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_viz_cells</span><span class="p">):</span>
+            <span class="n">nb</span><span class="o">.</span><span class="n">append_code</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">output_path</span><span class="p">:</span>
+        <span class="n">nb</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">nb</span></div>
+
+
+
+<div class="viewcode-block" id="markdown_cell">
+<a class="viewcode-back" href="../../module_docs/nbdol/base.html#nbdol.markdown_cell">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">markdown_cell</span><span class="p">(</span><span class="n">content</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a markdown cell dict.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; cell = markdown_cell(&quot;# Title&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; cell[&#39;cell_type&#39;]</span>
+<span class="sd">        &#39;markdown&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">nbformat</span><span class="o">.</span><span class="n">v4</span><span class="o">.</span><span class="n">new_markdown_cell</span><span class="p">(</span><span class="n">content</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="code_cell">
+<a class="viewcode-back" href="../../module_docs/nbdol/base.html#nbdol.code_cell">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">code_cell</span><span class="p">(</span><span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a code cell dict.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; cell = code_cell(&quot;x = 42&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; cell[&#39;cell_type&#39;]</span>
+<span class="sd">        &#39;code&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">nbformat</span><span class="o">.</span><span class="n">v4</span><span class="o">.</span><span class="n">new_code_cell</span><span class="p">(</span><span class="n">code</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_default_templates</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">CellTemplates</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get default template registry for common notebook patterns.</span>
+
+<span class="sd">    This creates templates suitable for data analysis notebooks using</span>
+<span class="sd">    cosmodata and cosmograph.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">templates</span> <span class="o">=</span> <span class="n">CellTemplates</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_intro_template</span><span class="p">(</span><span class="n">meta</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate introduction cells from metadata.&quot;&quot;&quot;</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;dataset_name&#39;</span><span class="p">,</span> <span class="s1">&#39;Dataset Analysis&#39;</span><span class="p">))</span>
+        <span class="k">yield</span> <span class="n">markdown_cell</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# </span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">desc</span> <span class="o">:=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;description&#39;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;dataset_description&#39;</span><span class="p">)):</span>
+            <span class="k">yield</span> <span class="n">markdown_cell</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;**Description:** </span><span class="si">{</span><span class="n">desc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">src</span> <span class="o">:=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">):</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;target_filename&#39;</span><span class="p">,</span> <span class="n">src</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;?&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">yield</span> <span class="n">markdown_cell</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;**Data Source:** [</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">](</span><span class="si">{</span><span class="n">src</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">viz_info</span> <span class="o">:=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;viz_columns_info&#39;</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">markdown_cell</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;**Visualization notes:** </span><span class="si">{</span><span class="n">viz_info</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">related</span> <span class="o">:=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;related_code&#39;</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">markdown_cell</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;**Related code:** </span><span class="si">{</span><span class="n">related</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_setup_template</span><span class="p">(</span><span class="n">meta</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate setup cells (parameters, installs, imports).&quot;&quot;&quot;</span>
+        <span class="k">yield</span> <span class="n">markdown_cell</span><span class="p">(</span><span class="s2">&quot;## Setup&quot;</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="n">markdown_cell</span><span class="p">(</span><span class="s2">&quot;### Data Parameters&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Data parameters cell</span>
+        <span class="n">params_lines</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">ext</span> <span class="o">:=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ext&#39;</span><span class="p">):</span>
+            <span class="n">params_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ext = </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">src</span> <span class="o">:=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">):</span>
+            <span class="n">params_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;src = </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">src</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">target</span> <span class="o">:=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;target_filename&#39;</span><span class="p">):</span>
+            <span class="n">params_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;target_filename = </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">params_lines</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">code_cell</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">params_lines</span><span class="p">))</span>
+
+        <span class="c1"># Install and import cell</span>
+        <span class="k">yield</span> <span class="n">markdown_cell</span><span class="p">(</span><span class="s2">&quot;### Install and Import&quot;</span><span class="p">)</span>
+
+        <span class="n">install_pkgs</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;install&#39;</span><span class="p">,</span> <span class="s1">&#39;cosmograph tabled cosmodata&#39;</span><span class="p">)</span>
+        <span class="n">installs_not_to_import</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;installs_not_to_import&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;cosmograph&#39;</span><span class="p">])</span>
+        <span class="n">custom_imports</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s1">&#39;imports&#39;</span><span class="p">,</span> <span class="s1">&#39;from functools import partial</span><span class="se">\n</span><span class="s1">from cosmograph import cosmo&#39;</span>
+        <span class="p">)</span>
+
+        <span class="n">install_lines</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;import os&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;if not os.getenv(&#39;IN_COSMO_DEV_ENV&#39;):&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;    %pip install -q </span><span class="si">{</span><span class="n">install_pkgs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="c1"># Import installed packages</span>
+        <span class="k">for</span> <span class="n">pkg</span> <span class="ow">in</span> <span class="n">install_pkgs</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">pkg</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">installs_not_to_import</span><span class="p">:</span>
+                <span class="n">install_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;import </span><span class="si">{</span><span class="n">pkg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">custom_imports</span><span class="p">:</span>
+            <span class="n">install_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">install_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">custom_imports</span><span class="p">)</span>
+
+        <span class="k">yield</span> <span class="n">code_cell</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">install_lines</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_template</span><span class="p">(</span><span class="n">meta</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate data loading cells.&quot;&quot;&quot;</span>
+        <span class="k">yield</span> <span class="n">markdown_cell</span><span class="p">(</span><span class="s2">&quot;## Load Data&quot;</span><span class="p">)</span>
+
+        <span class="n">load_code</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;if ext:</span>
+<span class="s2">    getter = partial(tabled.get_table, ext=ext)</span>
+<span class="s2">else:</span>
+<span class="s2">    getter = tabled.get_table</span>
+
+<span class="s2"># acquire_data handles caching locally for faster future access</span>
+<span class="s2">data = cosmodata.acquire_data(src, target_filename, getter=getter)&quot;&quot;&quot;</span>
+
+        <span class="k">yield</span> <span class="n">code_cell</span><span class="p">(</span><span class="n">load_code</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_explore_template</span><span class="p">(</span><span class="n">meta</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate data exploration cells.&quot;&quot;&quot;</span>
+        <span class="k">yield</span> <span class="n">markdown_cell</span><span class="p">(</span><span class="s2">&quot;## Explore Data&quot;</span><span class="p">)</span>
+
+        <span class="n">peep_mode</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;peep_mode&#39;</span><span class="p">,</span> <span class="s1">&#39;short&#39;</span><span class="p">)</span>
+        <span class="n">peep_exclude</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;peep_exclude_cols&#39;</span><span class="p">,</span> <span class="p">[])</span>
+
+        <span class="n">peep_code</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;mode = </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">peep_mode</span><span class="p">)</span><span class="si">}</span><span class="s2">  # Options: &#39;short&#39;, &#39;sample&#39;, &#39;stats&#39;</span>
+<span class="s2">exclude_cols = </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">peep_exclude</span><span class="p">)</span><span class="si">}</span>
+
+<span class="s2">cosmodata.print_dataframe_info(data, exclude_cols, mode=mode)&quot;&quot;&quot;</span>
+
+        <span class="k">yield</span> <span class="n">code_cell</span><span class="p">(</span><span class="n">peep_code</span><span class="p">)</span>
+
+    <span class="n">templates</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;intro&#39;</span><span class="p">,</span> <span class="n">_intro_template</span><span class="p">)</span>
+    <span class="n">templates</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;setup&#39;</span><span class="p">,</span> <span class="n">_setup_template</span><span class="p">)</span>
+    <span class="n">templates</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="n">_load_template</span><span class="p">)</span>
+    <span class="n">templates</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;explore&#39;</span><span class="p">,</span> <span class="n">_explore_template</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">templates</span>
+
+
+<span class="c1"># Convenience aliases</span>
+<span class="n">create_notebook</span> <span class="o">=</span> <span class="n">populate_notebook</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,353 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nbdol.nbdol_migration &mdash; nbdol 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            nbdol
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/nbdol.html">nbdol</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/nbdol/base.html">nbdol.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/nbdol/nbdol_migration.html">nbdol.nbdol_migration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/nbdol/tools.html">nbdol.tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/nbdol/util.html">nbdol.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">nbdol</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">nbdol.nbdol_migration</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for nbdol.nbdol_migration</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Example of migrating from old notebook_gen.py to nbdol.</span>
+
+<span class="sd">This shows how to refactor the original NotebookParams-based approach</span>
+<span class="sd">to use the new nbdol module with built-in protocols.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">nbdol.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Notebook</span><span class="p">,</span> <span class="n">NotebookStore</span><span class="p">,</span> <span class="n">populate_notebook</span>
+
+<span class="n">_DEFAULT_METADATA_VALUES</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;ext&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="s1">&#39;install&#39;</span><span class="p">:</span> <span class="s2">&quot;cosmograph tabled cosmodata&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;installs_not_to_import&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;cosmograph&quot;</span><span class="p">],</span>
+    <span class="s1">&#39;imports&#39;</span><span class="p">:</span> <span class="s2">&quot;&quot;&quot;from functools import partial </span>
+<span class="s2">from cosmograph import cosmo&quot;&quot;&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;viz_columns_info&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="s1">&#39;related_code&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="s1">&#39;peep_mode&#39;</span><span class="p">:</span> <span class="s1">&#39;short&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;peep_exclude_cols&#39;</span><span class="p">:</span> <span class="p">[],</span>
+<span class="p">}</span>
+
+<span class="n">_REQUIRED_BASE_FIELDS</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">,</span> <span class="s1">&#39;target_filename&#39;</span><span class="p">)</span>
+<span class="n">_REQUIRED_TEXT_FIELDS</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_metadata_with_defaults</span><span class="p">(</span><span class="n">metadata</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Merge metadata with defaults and support legacy field names.&quot;&quot;&quot;</span>
+    <span class="n">merged</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">_DEFAULT_METADATA_VALUES</span><span class="p">,</span> <span class="o">**</span><span class="nb">dict</span><span class="p">(</span><span class="n">metadata</span><span class="p">)}</span>
+
+    <span class="k">if</span> <span class="s1">&#39;title&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">merged</span> <span class="ow">and</span> <span class="s1">&#39;dataset_name&#39;</span> <span class="ow">in</span> <span class="n">merged</span><span class="p">:</span>
+        <span class="n">merged</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">merged</span><span class="p">[</span><span class="s1">&#39;dataset_name&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;description&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">merged</span> <span class="ow">and</span> <span class="s1">&#39;dataset_description&#39;</span> <span class="ow">in</span> <span class="n">merged</span><span class="p">:</span>
+        <span class="n">merged</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">merged</span><span class="p">[</span><span class="s1">&#39;dataset_description&#39;</span><span class="p">]</span>
+
+    <span class="n">missing_base</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">_REQUIRED_BASE_FIELDS</span> <span class="k">if</span> <span class="n">field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">merged</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">missing_base</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Metadata must include </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_REQUIRED_BASE_FIELDS</span><span class="p">)</span><span class="si">}</span><span class="s2">; &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;missing: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing_base</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">missing_text</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">_REQUIRED_TEXT_FIELDS</span> <span class="k">if</span> <span class="n">field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">merged</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">missing_text</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Metadata must include &#39;title&#39; and &#39;description&#39; (or the legacy &quot;</span>
+            <span class="s2">&quot;&#39;dataset_name&#39;/&#39;dataset_description&#39; aliases).&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">merged</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;installs_not_to_import&#39;</span><span class="p">),</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">merged</span><span class="p">[</span><span class="s1">&#39;installs_not_to_import&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">merged</span><span class="p">[</span><span class="s1">&#39;installs_not_to_import&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">merged</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;peep_exclude_cols&#39;</span><span class="p">),</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">merged</span><span class="p">[</span><span class="s1">&#39;peep_exclude_cols&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">merged</span><span class="p">[</span><span class="s1">&#39;peep_exclude_cols&#39;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">merged</span>
+
+
+<div class="viewcode-block" id="create_notebook">
+<a class="viewcode-back" href="../../module_docs/nbdol/nbdol_migration.html#nbdol.nbdol_migration.create_notebook">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_notebook</span><span class="p">(</span>
+    <span class="n">metadata</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">output_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">n_viz_cells</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Notebook</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a Jupyter notebook from metadata using nbdol.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        metadata: Mapping describing the notebook. Provide at least &#39;src&#39;,</span>
+<span class="sd">            &#39;target_filename&#39;, and either &#39;title&#39;/&#39;description&#39; or their legacy</span>
+<span class="sd">            aliases &#39;dataset_name&#39;/&#39;dataset_description&#39;.</span>
+<span class="sd">        output_path: Optional path to save the notebook.</span>
+<span class="sd">        n_viz_cells: Number of empty visualization cells to create.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Notebook instance (can be further modified)</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; metadata = {</span>
+<span class="sd">        ...     &#39;title&#39;: &#39;Test Dataset&#39;,</span>
+<span class="sd">        ...     &#39;description&#39;: &#39;A test dataset&#39;,</span>
+<span class="sd">        ...     &#39;src&#39;: &#39;https://example.com/data.csv&#39;,</span>
+<span class="sd">        ...     &#39;target_filename&#39;: &#39;data.csv&#39;,</span>
+<span class="sd">        ... }</span>
+<span class="sd">        &gt;&gt;&gt; nb = create_notebook(metadata)</span>
+<span class="sd">        &gt;&gt;&gt; isinstance(nb, Notebook)</span>
+<span class="sd">        True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">metadata_with_defaults</span> <span class="o">=</span> <span class="n">_metadata_with_defaults</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+
+    <span class="n">nb</span> <span class="o">=</span> <span class="n">populate_notebook</span><span class="p">(</span>
+        <span class="n">metadata_with_defaults</span><span class="p">,</span>
+        <span class="n">template_sequence</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;intro&#39;</span><span class="p">,</span> <span class="s1">&#39;setup&#39;</span><span class="p">,</span> <span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="s1">&#39;explore&#39;</span><span class="p">),</span>
+        <span class="n">n_viz_cells</span><span class="o">=</span><span class="n">n_viz_cells</span><span class="p">,</span>
+        <span class="n">output_path</span><span class="o">=</span><span class="n">output_path</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">nb</span></div>
+
+
+
+<div class="viewcode-block" id="generate_notebooks_from_cosmodata">
+<a class="viewcode-back" href="../../module_docs/nbdol/nbdol_migration.html#nbdol.nbdol_migration.generate_notebooks_from_cosmodata">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_notebooks_from_cosmodata</span><span class="p">(</span>
+    <span class="n">metas</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;notebooks/&#39;</span><span class="p">,</span> <span class="n">dataset_keys</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NotebookStore</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate notebooks for multiple datasets from cosmodata.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        metas: cosmodata.metas mapping object</span>
+<span class="sd">        output_dir: Directory to save notebooks</span>
+<span class="sd">        dataset_keys: Optional list of specific dataset keys to generate.</span>
+<span class="sd">                     If None, generates for all datasets.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        NotebookStore containing all generated notebooks</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; from cosmodata import metas  # doctest: +SKIP</span>
+<span class="sd">        &gt;&gt;&gt; store = generate_notebooks_from_cosmodata(  # doctest: +SKIP</span>
+<span class="sd">        ...     metas,</span>
+<span class="sd">        ...     dataset_keys=[&#39;bitcoin&#39;, &#39;weather&#39;]</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; &#39;bitcoin&#39; in store  # doctest: +SKIP</span>
+<span class="sd">        True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">store</span> <span class="o">=</span> <span class="n">NotebookStore</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+
+    <span class="n">keys_to_process</span> <span class="o">=</span> <span class="n">dataset_keys</span> <span class="k">if</span> <span class="n">dataset_keys</span> <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="n">metas</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys_to_process</span><span class="p">:</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">metas</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="c1"># cosmodata meta dict can be used directly as metadata</span>
+        <span class="n">nb</span> <span class="o">=</span> <span class="n">populate_notebook</span><span class="p">(</span>
+            <span class="n">meta</span><span class="p">,</span> <span class="n">template_sequence</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;intro&#39;</span><span class="p">,</span> <span class="s1">&#39;setup&#39;</span><span class="p">,</span> <span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="s1">&#39;explore&#39;</span><span class="p">),</span> <span class="n">n_viz_cells</span><span class="o">=</span><span class="mi">5</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Save using store (dict-like interface)</span>
+        <span class="n">store</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">nb</span>
+
+    <span class="k">return</span> <span class="n">store</span></div>
+
+
+
+<div class="viewcode-block" id="create_custom_analysis_notebook">
+<a class="viewcode-back" href="../../module_docs/nbdol/nbdol_migration.html#nbdol.nbdol_migration.create_custom_analysis_notebook">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_custom_analysis_notebook</span><span class="p">(</span>
+    <span class="n">dataset_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">metas</span><span class="p">,</span>
+    <span class="n">custom_analysis_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">output_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Notebook</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create notebook with custom analysis section.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; nb = create_custom_analysis_notebook(  # doctest: +SKIP</span>
+<span class="sd">        ...     &#39;bitcoin&#39;,</span>
+<span class="sd">        ...     metas,</span>
+<span class="sd">        ...     custom_analysis_code=&#39;df.plot()&#39;</span>
+<span class="sd">        ... )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">meta</span> <span class="o">=</span> <span class="n">metas</span><span class="p">[</span><span class="n">dataset_key</span><span class="p">]</span>
+
+    <span class="c1"># Create base notebook</span>
+    <span class="n">nb</span> <span class="o">=</span> <span class="n">populate_notebook</span><span class="p">(</span>
+        <span class="n">meta</span><span class="p">,</span> <span class="n">template_sequence</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;intro&#39;</span><span class="p">,</span> <span class="s1">&#39;setup&#39;</span><span class="p">,</span> <span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="s1">&#39;explore&#39;</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Add custom analysis section</span>
+    <span class="n">nb</span><span class="o">.</span><span class="n">append_markdown</span><span class="p">(</span><span class="s2">&quot;## Custom Analysis&quot;</span><span class="p">)</span>
+    <span class="n">nb</span><span class="o">.</span><span class="n">append_code</span><span class="p">(</span><span class="n">custom_analysis_code</span><span class="p">)</span>
+
+    <span class="c1"># Add visualization cells</span>
+    <span class="n">nb</span><span class="o">.</span><span class="n">append_markdown</span><span class="p">(</span><span class="s2">&quot;## Visualizations&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">nb</span><span class="o">.</span><span class="n">append_code</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">output_path</span><span class="p">:</span>
+        <span class="n">nb</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">nb</span></div>
+
+
+
+<div class="viewcode-block" id="add_section_to_existing_notebooks">
+<a class="viewcode-back" href="../../module_docs/nbdol/nbdol_migration.html#nbdol.nbdol_migration.add_section_to_existing_notebooks">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_section_to_existing_notebooks</span><span class="p">(</span>
+    <span class="n">store</span><span class="p">:</span> <span class="n">NotebookStore</span><span class="p">,</span>
+    <span class="n">section_title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">section_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">notebook_keys</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add a new section to existing notebooks in a store.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        store: NotebookStore instance</span>
+<span class="sd">        section_title: Title for the new section</span>
+<span class="sd">        section_code: Code to add in the new section</span>
+<span class="sd">        notebook_keys: Optional list of specific notebooks to modify</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; store = NotebookStore(&#39;notebooks/&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; add_section_to_existing_notebooks(</span>
+<span class="sd">        ...     store,</span>
+<span class="sd">        ...     &quot;## Statistical Analysis&quot;,</span>
+<span class="sd">        ...     &quot;df.describe()&quot;</span>
+<span class="sd">        ... )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="n">notebook_keys</span> <span class="k">if</span> <span class="n">notebook_keys</span> <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="n">store</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+        <span class="c1"># Load notebook (dict-like access)</span>
+        <span class="n">nb</span> <span class="o">=</span> <span class="n">store</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="c1"># Add new section</span>
+        <span class="n">nb</span><span class="o">.</span><span class="n">append_markdown</span><span class="p">(</span><span class="n">section_title</span><span class="p">)</span>
+        <span class="n">nb</span><span class="o">.</span><span class="n">append_code</span><span class="p">(</span><span class="n">section_code</span><span class="p">)</span>
+
+        <span class="c1"># Save back (dict-like assignment)</span>
+        <span class="n">store</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">nb</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Bitcoin Price Data&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Historical Bitcoin prices and trading volume&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;src&#39;</span><span class="p">:</span> <span class="s1">&#39;https://example.com/bitcoin.parquet&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;target_filename&#39;</span><span class="p">:</span> <span class="s1">&#39;bitcoin.parquet&#39;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Create notebook</span>
+    <span class="n">nb</span> <span class="o">=</span> <span class="n">create_notebook</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="n">output_path</span><span class="o">=</span><span class="s1">&#39;bitcoin_analysis.ipynb&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Can still modify after creation</span>
+    <span class="n">nb</span><span class="o">.</span><span class="n">append_markdown</span><span class="p">(</span><span class="s2">&quot;## Additional Analysis&quot;</span><span class="p">)</span>
+    <span class="n">nb</span><span class="o">.</span><span class="n">append_code</span><span class="p">(</span><span class="s2">&quot;# Custom code here&quot;</span><span class="p">)</span>
+    <span class="n">nb</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>  <span class="c1"># Saves to original path</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created notebook with </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">nb</span><span class="p">)</span><span class="si">}</span><span class="s2"> cells&quot;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
